@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "public",
+    "public": "dist/distance-app",
     "ignore": [
       "firebase.json",
       "**/.*",
