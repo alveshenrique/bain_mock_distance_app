@@ -20,7 +20,7 @@ export class AppComponent {
   nominatinApiUrl = 'https://nominatim.openstreetmap.org/search?q=';
   format = '&format=geocodejson';
 
-  backendAPIUrl = 'http://localhost:8081/api/userQueries';
+  backendAPIUrl = 'http://localhost:5000/api/userQueries';
 
   constructor(private http: HttpClient) {
 
@@ -36,6 +36,7 @@ export class AppComponent {
     let coord2 = this.getCoords(this.address2);
     Promise.all([coord1, coord2]).then((values: Coordinates[]) => {
       // Create return object for api
+      console.log(coord1);
       let userQuery: UserQuery = new UserQuery();
       // Save coords on object for api post
       userQuery.lat1 = values[0].lat;
@@ -44,13 +45,18 @@ export class AppComponent {
       userQuery.lng2 = values[1].lng;
       console.log("User Query:");
       console.log(userQuery);
-      // Calculate the distance between coords
-      let d = this.calcCrow(values[0].lat, values[0].lng, values[1].lat, values[1].lng);
-      // Save distance for api post
-      userQuery.distance = d;
-      let roundDistance = Math.round(d * 100) / 100;
-      this.results = 'The calculated distance is: ' + roundDistance + 'km';
-       this.saveQueryOnDb(userQuery);
+      
+      if(userQuery.lat1 & userQuery.lat2 & userQuery.lng1 & userQuery.lng2) {
+        // Calculate the distance between coords
+        let d = this.calcCrow(values[0].lat, values[0].lng, values[1].lat, values[1].lng);
+        // Save distance for api post
+        userQuery.distance = d;
+        let roundDistance = Math.round(d * 100) / 100;
+        this.results = 'The calculated distance is: ' + roundDistance + 'km';
+        this.saveQueryOnDb(userQuery);
+      } else {
+        this.results = "Distance not found. Please type a pair of valid addresses."
+      }
   });
   }
 
@@ -69,7 +75,10 @@ export class AppComponent {
     return new Promise((resolve, reject) => this.http.get<NominatinResponse>(this.buildAPIUrl(address)).subscribe({
       next: (r1) => {
         if(r1.features.length == 0)
-        { return console.log("No features found")}
+        { 
+          resolve(new Coordinates());
+          return console.log("No features found")
+        }
         console.log(r1);
         console.log("Address:")
         let coord: number[] = r1.features[0].geometry.coordinates;
