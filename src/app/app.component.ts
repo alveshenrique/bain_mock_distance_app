@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Coordinates } from './models/coordinates';
 import { NominatinResponse } from './models/nominatin-response';
+import { UserQuery } from './models/user-query';
 
 @Component({
   selector: 'app-root',
@@ -16,8 +17,10 @@ export class AppComponent {
   add2LatLong!: Coordinates;
   results = '';
 
-  apiUrl = 'https://nominatim.openstreetmap.org/search?q=';
+  nominatinApiUrl = 'https://nominatim.openstreetmap.org/search?q=';
   format = '&format=geocodejson';
+
+  backendAPIUrl = 'http://localhost:8081/api/userQueries';
 
   constructor(private http: HttpClient) {
 
@@ -25,22 +28,42 @@ export class AppComponent {
 
 
   private buildAPIUrl(address: string) {
-    return this.apiUrl + address + this.format;
+    return this.nominatinApiUrl + address + this.format;
   }
   
   onClick() {
     let coord1 = this.getCoords(this.address1);
     let coord2 = this.getCoords(this.address2);
     Promise.all([coord1, coord2]).then((values: Coordinates[]) => {
-      console.log("All promisses done:");
-      console.log(values);
-      console.log("Calculating Distance:");
+      // Create return object for api
+      let userQuery: UserQuery = new UserQuery();
+      // Save coords on object for api post
+      userQuery.lat1 = values[0].lat;
+      userQuery.lng1 = values[0].lng;
+      userQuery.lat2 = values[1].lat;
+      userQuery.lng2 = values[1].lng;
+      console.log("User Query:");
+      console.log(userQuery);
+      // Calculate the distance between coords
       let d = this.calcCrow(values[0].lat, values[0].lng, values[1].lat, values[1].lng);
-      console.log(d);
+      // Save distance for api post
+      userQuery.distance = d;
       let roundDistance = Math.round(d * 100) / 100;
-      this.results = 'The calculated distance is: ' + roundDistance + 'km'; 
+      this.results = 'The calculated distance is: ' + roundDistance + 'km';
+       this.saveQueryOnDb(userQuery);
   });
   }
+
+  private saveQueryOnDb(userQuery: UserQuery) {
+    this.http.post<UserQuery>(this.backendAPIUrl, userQuery).subscribe({
+      next: (res) => {
+        console.log("Db response:");
+        console.log(res);
+      },
+      error: (err) => console.log(err)
+    })
+  }
+
 
   private getCoords(address: string): Promise<Coordinates> {
     return new Promise((resolve, reject) => this.http.get<NominatinResponse>(this.buildAPIUrl(address)).subscribe({
