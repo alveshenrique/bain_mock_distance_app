@@ -20,7 +20,7 @@ export class AppComponent {
   nominatinApiUrl = 'https://nominatim.openstreetmap.org/search?q=';
   format = '&format=geocodejson';
 
-  backendAPIUrl = 'http://distancequeriesmysqlcrudaws-env.eba-ik4x2kew.us-east-1.elasticbeanstalk.com/api/userQueries/api/userQueries';
+  backendAPIUrl = 'https://distance-queries-prod.herokuapp.com/api/userQueries/';
 
   constructor(private http: HttpClient) {
 
