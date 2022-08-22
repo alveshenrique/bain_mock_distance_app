@@ -1,27 +1,20 @@
 # DistanceApp
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.0.
+This is the code for the frontend part of the Bain & Company Recruiting Case.
 
-## Development server
+This app takes two string inputs about two addresses and returns the distance between those two locations using the latitude and longitude of the identified locations.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+This app was built using the Angular framework, and is hosted at Firebase as https://distance-queries-2fa7c.web.app/
 
-## Code scaffolding
+The backend was built using Spring Boot and Java and was deployed at Heroku as https://distance-queries-prod.herokuapp.com/api/userQueries/ . For more details about the backend, check https://github.com/alveshenrique/distance-queries-prod
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+To run this code locally, change the variable backendAPIUrl to "http://localhost:5000/api/userQueries/" (file \src\appzapp.component.ts), then run (npm and angular cli installed are necessary):
 
-## Build
+ng serve
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Also, on the root of the backend code located at https://github.com/alveshenrique/distance-queries-prod , run (Maven necessary):
 
-## Running unit tests
+mvn spring-boot:run
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+So that you will be hosting the backend at your local machine. The database is already hosted at AWS, so no need to have MySQL installed (but this way, both the production and development DBs are the same DB).
 
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
